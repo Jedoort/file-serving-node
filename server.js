@@ -4,7 +4,7 @@ const path = require('path');
 const mime = require('mime-types');
 
 const server = http.createServer((req, res) => {
-    let filePath = path.join(__dirname, req.url === '/' ? 'index.html' : req.url);
+    let filePath = path.join(__dirname, 'public', req.url === '/' ? 'index.html' : req.url);
 
     fs.readFile(filePath, (err, content) => {
         if (err) {
