@@ -4,8 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Node.js File Server</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+      #status { margin-top: 15px; font-weight: bold; }
+      .success { color: green; }
+      .error { color: crimson; }
+    </style>
 </head>
 <body>
     <h1>Welcome to the Node.js File Server</h1>
+
+    <p>Allowed types: .jpg, .jpeg, .png, .gif, .pdf, .txt, .csv, .docx (max 5MB)</p>
+
+    <form id="uploadForm">
+      <input type="file" name="file" id="fileInput" required>
+      <button type="submit">Upload</button>
+    </form>
+
+    <div id="status"></div>
+
+    <script>
+      const form = document.getElementById('uploadForm');
+      const status = document.getElementById('status');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        status.textContent = 'Uploading...';
+        status.className = '';
+
+        const formData = new FormData(form);
+
+        try {
+          const res = await fetch('/upload', { method: 'POST', body: formData });
+          const data = await res.json();
+
+          if (res.ok) {
+            status.textContent = `Success: ${data.fileName} (${data.url})`;
+            status.className = 'success';
+            form.reset();
+          } else {
+            status.textContent = `Error: ${data.error}`;
+            status.className = 'error';
+          }
+        } catch (err) {
+          status.textContent = 'Error: could not reach server.';
+          status.className = 'error';
+        }
+      });
+    </script>
 </body>
 </html>
